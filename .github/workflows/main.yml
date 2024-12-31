@@ -1,0 +1,33 @@
+name: Ping IP and Get Self IP
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  ping-self-and-remote:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get self IP address
+      run: |
+        echo "Getting self IP address"
+        SELF_IP=$(curl -s ifconfig.me)  
+        echo "Self IP address is: $SELF_IP"
+    
+    - name: Test connectivity to google.com using curl
+      run: |
+        TARGET_URL="https://google.com"
+        echo "Testing connectivity to: $TARGET_URL"
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" $TARGET_URL)
+        echo "HTTP Status Code: $HTTP_STATUS"
+        if [ "$HTTP_STATUS" -eq 200 ]; then
+          echo "Connection successful. The server is reachable!"
+        else
+          echo "Connection failed. The server is not reachable or returned status: $HTTP_STATUS"
+        fi
+
